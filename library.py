@@ -65,7 +65,7 @@ def Heun_step(x, dx, Bfield, Density, Density_grad, Pos, VoronoiPos, Volume):
     local_fields_1, abs_local_fields_1, local_densities, cells = find_points_and_get_fields(x, Bfield, Density, Density_grad, Pos, VoronoiPos)
     local_fields_1 = local_fields_1 / np.tile(abs_local_fields_1,(3,1)).T
     CellVol = Volume[cells]
-    dx *= ((3/4)*Volume[cells]/np.pi)**(1/3)  
+    dx *= ((3/4)* CellVol/np.pi)**(1/3)  
     x_tilde = x + dx[:, np.newaxis] * local_fields_1
     local_fields_2, abs_local_fields_2, local_densities, cells = find_points_and_get_fields(x_tilde, Bfield, Density, Density_grad, Pos, VoronoiPos)
     local_fields_2 = local_fields_2 / np.tile(abs_local_fields_2,(3,1)).T	
@@ -74,7 +74,8 @@ def Heun_step(x, dx, Bfield, Density, Density_grad, Pos, VoronoiPos, Volume):
     unito = 2*(local_fields_1 + local_fields_2)/abs_sum_local_fields[:, np.newaxis]
     x_final = x + 0.5 * dx[:, np.newaxis] * unito
     
-    return x_final, abs_local_fields_1, local_densities, CellVol
+    #return x_final, abs_local_fields_1, local_densities, CellVol
+    return x_final, abs_sum_local_fields, local_densities, CellVol
 
 def list_files(directory, ext):
     import os
